@@ -2,36 +2,33 @@ package electrics.industries;
 
 public class Gearbox {
 
-    private int s = 0;
-    private int e = 0;
+    private int vitesse = 0;
 
-    public void doit(int i) {
-        if (s < 0) {
+    public void calculerVitesse(int regimeMoteur) {
+        if (vitesse < 0) {
             // do nothing!
-            e = i;
         }
         else {
-            if (s > 0) {
-                if (i > 2000) {
-                    s++;
-                } else if (i < 500) {
-                    s--;
+            if (vitesse > 0) {
+                if (regimeMoteur > 2000) {
+                	vitesse++;
+                } else if (regimeMoteur < 500) {
+                	vitesse--;
                 }
-            } if (s > 6) {
-                s--;
-            } else if (s < 1) {
-                s++;
+            } if (vitesse > 6) {
+            	vitesse--;
+            } else if (vitesse < 1) {
+            	vitesse++;
             }
-            e = i;
         }
     }
 
-	public int getS() {
-		return s;
+	public int getVitesse() {
+		return vitesse;
 	}
 
-	public void setS(int s) {
-		this.s = s;
+	public void setVitesse(int vitesse) {
+		this.vitesse = vitesse;
 	}
 
     
