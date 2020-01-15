@@ -1,5 +1,6 @@
 package electrics.industries;
 
+import java.util.function.BiPredicate;
 import java.util.function.IntPredicate;
 
 public class Gearbox {
@@ -12,12 +13,16 @@ public class Gearbox {
 	private IntPredicate regimeLessThanMin = regimeExp -> regimeExp < GearboxConstant.REGIME_MIN;
 	private IntPredicate regimeMoreThanMax = regimeExp -> regimeExp > GearboxConstant.REGIME_MAX;
 
-	private BoiteVitesseInterface augmenterVitesse = () -> {
-		vitesse++;
-	};
+	private BiPredicate<Integer, Integer> whenAugmenterVitesse = (vitesseExp,
+			regimeExp) -> (vitesseIsMin.test(vitesseExp))
+					|| (vitesseLessThanMax.test(vitesseExp) && regimeMoreThanMax.test(regimeExp));
 
-	private BoiteVitesseInterface diminuerVitesse = () -> {
-		vitesse--;
+	private BiPredicate<Integer, Integer> whenDiminuerVitesse = (vitesseExp,
+			regimeExp) -> vitesseMoreThanUN.test(vitesseExp) && regimeLessThanMin.test(regimeExp);
+
+	private BoiteVitesseInterface boiteVitesse = (vitesseExp, regimeExp) -> {
+		return (whenAugmenterVitesse.test(vitesseExp, regimeExp)) ? ++vitesse
+				: (whenDiminuerVitesse.test(vitesseExp, regimeExp)) ? --vitesse : vitesse;
 	};
 
 	public Gearbox() {
@@ -25,20 +30,10 @@ public class Gearbox {
 	}
 
 	public void calculerVitesse(int regimeMoteur) {
-		if ((vitesseIsMin.test(vitesse))
-				|| (vitesseLessThanMax.test(vitesse) && regimeMoreThanMax.test(regimeMoteur))) {
-			augmenterVitesse.updateVitesse();
-		} else if (vitesseMoreThanUN.test(vitesse) && regimeLessThanMin.test(regimeMoteur)) {
-			diminuerVitesse.updateVitesse();
-		}
+		vitesse = boiteVitesse.updateVitesse(vitesse, regimeMoteur);
 	}
 
 	public int getVitesse() {
 		return vitesse;
 	}
-
-	public void setVitesse(int vitesse) {
-		this.vitesse = vitesse;
-	}
-
 }

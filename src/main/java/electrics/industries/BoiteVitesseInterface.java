@@ -3,6 +3,6 @@ package electrics.industries;
 @FunctionalInterface 
 public interface BoiteVitesseInterface {
 	
-	public void updateVitesse();
+	public int updateVitesse(int vitesse, int regimeMoteur);
 
 }
