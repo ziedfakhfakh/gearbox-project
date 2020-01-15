@@ -1,27 +1,43 @@
 package electrics.industries;
 
+import java.util.function.IntPredicate;
+
 public class Gearbox {
 
-    private int vitesse = 0;
+	private int vitesse;
 
-    public void calculerVitesse(int regimeMoteur) {
-        if (vitesse < 0) {
-            // do nothing!
-        }
-        else {
-            if (vitesse > 0) {
-                if (regimeMoteur > 2000) {
-                	vitesse++;
-                } else if (regimeMoteur < 500) {
-                	vitesse--;
-                }
-            } if (vitesse > 6) {
-            	vitesse--;
-            } else if (vitesse < 1) {
-            	vitesse++;
-            }
-        }
-    }
+	private IntPredicate vitesseMoreThanZero = vitesseExp -> vitesseExp > GearboxConstant.VITESSE_MIN;
+	private IntPredicate vitesseMoreThanSix = vitesseExp -> vitesseExp > GearboxConstant.VITESSE_MAX;
+	private IntPredicate vitesseIsZero = vitesseExp -> vitesseExp == GearboxConstant.VITESSE_MIN;
+	private IntPredicate regimeLessThanMin = regimeExp -> regimeExp < GearboxConstant.REGIME_MIN;
+	private IntPredicate regimeMoreThanMax = regimeExp -> regimeExp > GearboxConstant.REGIME_MAX;
+
+	private BoiteVitesseInterface augmenterVitesse = () -> {
+		++vitesse;
+	};
+
+	private BoiteVitesseInterface diminuerVitesse = () -> {
+		--vitesse;
+	};
+
+	public Gearbox() {
+		vitesse = 0;
+	}
+
+	public void calculerVitesse(int regimeMoteur) {
+		if (vitesseMoreThanZero.test(vitesse)) {
+			if (regimeMoreThanMax.test(regimeMoteur)) {
+				augmenterVitesse.updateVitesse();
+			} else if (regimeLessThanMin.test(regimeMoteur)) {
+				diminuerVitesse.updateVitesse();
+			}
+		}
+		if (vitesseMoreThanSix.test(vitesse)) {
+			diminuerVitesse.updateVitesse();
+		} else if (vitesseIsZero.test(vitesse)) {
+			augmenterVitesse.updateVitesse();
+		}
+	}
 
 	public int getVitesse() {
 		return vitesse;
@@ -31,5 +47,4 @@ public class Gearbox {
 		this.vitesse = vitesse;
 	}
 
-    
 }
