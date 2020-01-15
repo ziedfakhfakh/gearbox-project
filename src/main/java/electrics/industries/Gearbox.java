@@ -6,18 +6,18 @@ public class Gearbox {
 
 	private int vitesse;
 
-	private IntPredicate vitesseMoreThanZero = vitesseExp -> vitesseExp > GearboxConstant.VITESSE_MIN;
-	private IntPredicate vitesseMoreThanSix = vitesseExp -> vitesseExp > GearboxConstant.VITESSE_MAX;
-	private IntPredicate vitesseIsZero = vitesseExp -> vitesseExp == GearboxConstant.VITESSE_MIN;
+	private IntPredicate vitesseMoreThanUN = vitesseExp -> vitesseExp > GearboxConstant.VITESSE_MIN + 1;
+	private IntPredicate vitesseLessThanMax = vitesseExp -> vitesseExp < GearboxConstant.VITESSE_MAX;
+	private IntPredicate vitesseIsMin = vitesseExp -> vitesseExp == GearboxConstant.VITESSE_MIN;
 	private IntPredicate regimeLessThanMin = regimeExp -> regimeExp < GearboxConstant.REGIME_MIN;
 	private IntPredicate regimeMoreThanMax = regimeExp -> regimeExp > GearboxConstant.REGIME_MAX;
 
 	private BoiteVitesseInterface augmenterVitesse = () -> {
-		++vitesse;
+		vitesse++;
 	};
 
 	private BoiteVitesseInterface diminuerVitesse = () -> {
-		--vitesse;
+		vitesse--;
 	};
 
 	public Gearbox() {
@@ -25,17 +25,11 @@ public class Gearbox {
 	}
 
 	public void calculerVitesse(int regimeMoteur) {
-		if (vitesseMoreThanZero.test(vitesse)) {
-			if (regimeMoreThanMax.test(regimeMoteur)) {
-				augmenterVitesse.updateVitesse();
-			} else if (regimeLessThanMin.test(regimeMoteur)) {
-				diminuerVitesse.updateVitesse();
-			}
-		}
-		if (vitesseMoreThanSix.test(vitesse)) {
-			diminuerVitesse.updateVitesse();
-		} else if (vitesseIsZero.test(vitesse)) {
+		if ((vitesseIsMin.test(vitesse))
+				|| (vitesseLessThanMax.test(vitesse) && regimeMoreThanMax.test(regimeMoteur))) {
 			augmenterVitesse.updateVitesse();
+		} else if (vitesseMoreThanUN.test(vitesse) && regimeLessThanMin.test(regimeMoteur)) {
+			diminuerVitesse.updateVitesse();
 		}
 	}
 
